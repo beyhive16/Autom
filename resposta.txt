@@ -1,0 +1,24 @@
+teste é identificador
+a2 é identificador
+l_etra é identificador
+a@b é identificador
+a@bc é identificador
+a@ab@cd é identificador
+a3@d é identificador
+3 é digito
+comentario de uma linha
+comentario de muitas linhas
+programa é palavra reservada
+/- é operador
+automatao é identificador
+se é palavra reservada
+-12,34 é digito
+donate é identificador
+hasta_la_vista é identificador
+c1 é identificador
+= é simbolo
+a1 é identificador
++ é simbolo
+b1 é identificador
+<= é operador
+doze é identificador

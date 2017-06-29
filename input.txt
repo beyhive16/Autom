@@ -1,0 +1,8 @@
+teste a2 123letra l_etra
+a@b a@bc a@ab@cd a3@d
+(* alguma coisa *)
+3@a a3@3 3a@@db
+@@ blabla bla
+// alguma coisa //
+programa /- automatao se -12,34 donate hasta_la_vista
+c1=a1+b1 <= doze
