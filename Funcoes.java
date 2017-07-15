@@ -20,7 +20,7 @@ public class Funcoes {
         int estado = 0;
         int incr = 0;
         
-        File arquivo = new File("/home/kel/Documentos/Códigos em Java/Eclipse/src/autom/resposta.txt");
+        File arquivo = new File("resposta.txt");
         FileWriter fw = new FileWriter(arquivo, true);
         BufferedWriter bw = new BufferedWriter(fw);
         
@@ -41,8 +41,7 @@ public class Funcoes {
                             estado = 3;
                         } else if (entrada.get(incr) == ',' || entrada.get(incr) == '-') {
                             estado = 4;
-                        } else if (entrada.get(incr) == '@' || entrada.get(incr) == '/' 
-                                || entrada.get(incr) == '_') {
+                        } else if (entrada.get(incr) == '@' || entrada.get(incr) == '/') {
                             estado = 5;
                         } else if (entrada.get(incr) == ' ' || entrada.get(incr) == '\n' 
                                 || entrada.get(incr) == '\t'){
@@ -58,35 +57,44 @@ public class Funcoes {
                         if (Character.isLetter(entrada.get(incr))) {
                             tokenTEMP.add(entrada.get(incr));
                             incr++;
+                            boolean duoarroba = false;
+                            //boolean permitidoarroba = true;
                             nome:
                             while (true) {
                                 if (Character.isLetter(entrada.get(incr)) || Character.isDigit(entrada.get(incr))) {
                                     tokenTEMP.add(entrada.get(incr));
                                 } else if (entrada.get(incr) == '_'){
                                     estado = 4;
+                                    //permitidoarroba = false;
                                     break nome;
                                 }else if (entrada.get(incr) == '@'){
+                                    tokenTEMP.add(entrada.get(incr));
                                     incr++;
                                     if((entrada.get(incr) == '@')){
-                                        incr++;
-                                        estado = 0;
-                                        break nome;
+                                        tokenTEMP.add(entrada.get(incr));
+                                        duoarroba= true;
                                     }else{
                                         incr--;
-                                        estado = 5;
-                                        break nome;
                                     }
                                 }else{
                                     estado = 0;
+                                    boolean retorno;
                                     if (!verifica(tokenTEMP, proibidas, fw, bw)) {
-                                        adicionar(tokenTEMP, identificadores, fw, bw);
+                                        retorno = adicionar(tokenTEMP, identificadores, fw, bw, duoarroba);
+                                        if(!retorno){
+                                            System.out.println("BREAK! Identificador inválido");
+                                            break thedo;
+                                        }
                                     }
                                     break nome;
                                 }
+                                
                                 incr++;
                             }
-                            
+                        duoarroba=false;
+                        //permitidoarroba=true;
                         }
+                        
                         break;
                     case 2:
                         if (Character.isDigit(entrada.get(incr))) {
@@ -96,8 +104,8 @@ public class Funcoes {
                             while (true) {
                                 if (Character.isDigit(entrada.get(incr))) {
                                     tokenTEMP.add(entrada.get(incr));
-                                } else if (Character.isLetter(entrada.get(incr))){
-                                    estado = 0;
+                                } else if (Character.isLetter(entrada.get(incr)) || entrada.get(incr) == '@'){
+                                    estado = 1;
                                     break nome;
                                 }else {
                                     validaDigito(tokenTEMP, digitos, fw, bw);
@@ -125,17 +133,21 @@ public class Funcoes {
                                 break;
                             }
                         } else if (entrada.get(incr) == '<'){
+                            //System.out.println("anterior: "+entrada.get(incr-1));
+                            //System.out.println("achou o <");
                             tokenTEMP.add(entrada.get(incr));
                             incr++;
                             if(entrada.get(incr) == '=' || entrada.get(incr) == '>'){
+                                //System.out.println("achou o "+entrada.get(incr));
                                 tokenTEMP.add(entrada.get(incr));
                                 idOperador(tokenTEMP, simbolos, fw, bw);
                                 estado = 0;
                                 incr++;
                             }else{
+                                //System.out.println("entrou no else no "+entrada.get(incr));
                                 idSimbol(tokenTEMP, simbolos, fw, bw);
                                 estado = 0;
-                                incr++;
+                                //incr++;
                                 break;
                             }
                         }else if (entrada.get(incr) == '.'){
@@ -166,6 +178,12 @@ public class Funcoes {
                                             System.out.println("comentario de muitas linhas");
                                             break nome;
                                         }
+                                    }
+                                    if(incr==entrada.size()-1){
+                                        System.out.println("fim do programa! Final do comentário nao encontrado");
+                                         bw.write("fim do programa! Final do comentário nao encontrado");
+                                         bw.newLine();
+                                         break thedo;
                                     }
                                 }
                                 tokenTEMP.clear();
@@ -260,9 +278,17 @@ public class Funcoes {
                                     }else if (entrada.get(incr) == '_') {
                                         estado = 4;
                                         break nome;
+                                    }else if (entrada.get(incr) == '@') {
+                                        System.out.println("BREAK! Identificador invalido: @");
+                                        break thedo;
                                     }else {
                                         estado = 0;
-                                        adicionar(tokenTEMP, identificadores, fw, bw);
+                                        boolean retorno;
+                                        retorno = adicionar(tokenTEMP, identificadores, fw, bw,false);
+                                        if(!retorno){
+                                            System.out.println("BREAK! Identificador inválido");
+                                            break thedo;
+                                        }
                                         incr++;
                                         break nome;
                                     }
@@ -315,7 +341,12 @@ public class Funcoes {
                                         break nome;
                                     }else {
                                         estado = 0;
-                                        adicionar(tokenTEMP, identificadores, fw, bw);
+                                        boolean retorno;
+                                        retorno = adicionar(tokenTEMP, identificadores, fw, bw,false);
+                                        if(!retorno){
+                                            System.out.println("BREAK! Identificador inválido");
+                                            break thedo;
+                                        }
                                         incr++;
                                         break nome;
                                     }
@@ -330,6 +361,7 @@ public class Funcoes {
                         } else if (entrada.get(incr) == '/') {
                             tokenTEMP.add(entrada.get(incr));
                             incr++;
+                            boolean continua=true;
                             if (entrada.get(incr) == '/') {
                                 nome:
                                 while (true) {
@@ -341,8 +373,15 @@ public class Funcoes {
                                             System.out.println("comentario de muitas linhas");
                                             bw.write("comentario de muitas linhas");
                                             bw.newLine();
+                                            continua=false;
                                             break nome;
                                         }
+                                    }
+                                    if(incr==entrada.size()-1 && continua==true){
+                                        System.out.println("fim do programa! Final do comentário nao encontrado");
+                                         bw.write("fim do programa! Final do comentário nao encontrado");
+                                         bw.newLine();
+                                         break thedo;
                                     }
                                 }
                                 tokenTEMP.clear();
@@ -382,20 +421,35 @@ public class Funcoes {
         return false;
     }
 
-    public void adicionar(List<Character> tokenTEMP, List<String> identificadores, FileWriter fw, BufferedWriter bw) throws IOException {
+    public boolean adicionar(List<Character> tokenTEMP, List<String> identificadores, FileWriter fw, BufferedWriter bw, boolean flag) throws IOException {
         String texto = "";
+        int cont=0;
+        int i=0;
+        boolean retorno = true;
+        boolean valido = true;
         for (Character palavra : tokenTEMP) {
             texto += palavra;
+            if(palavra=='_'){
+                if(i!=1){
+                    valido = false;
+                }
+                cont++;
+            }
+            i++;
         }
-        if(Character.isLetter(tokenTEMP.get(0))){
+        if((Character.isLetter(tokenTEMP.get(0)) && flag == false) && (Character.isLetter(tokenTEMP.get(tokenTEMP.size()-1)) && cont<=1) && (valido==true)){
         identificadores.add(texto);
         System.out.println(texto + " é identificador");
         bw.write(texto + " é identificador");
         bw.newLine();
         }else{
             //System.out.println(texto+" não é identificador");
+            retorno = false;
         }
+        flag = true;
+        valido = true;
         tokenTEMP.clear();
+        return retorno;
     }
 
     public void validaDigito(List<Character> tokenTEMP, List<String> digitos, FileWriter fw, BufferedWriter bw) throws IOException {

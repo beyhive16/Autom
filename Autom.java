@@ -18,6 +18,9 @@ public class Autom {
         List<Character> simbolos = new ArrayList<>();
         List<Character> finala = new ArrayList<>();
         finala = obj2.txtOracao();
+        for (int i = 0; i < finala.size(); i++) {
+            //System.out.println("leu"+i+": "+finala.get(i));
+        }
         addPalavras(proibidas);
         obj.analise(finala, proibidas);
 

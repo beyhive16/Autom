@@ -15,7 +15,8 @@ import java.util.List;
 public class TXTAutomatos {
 
     public List<Character> txtOracao() throws FileNotFoundException, IOException {
-        InputStream e = new FileInputStream("/home/kel/Documentos/Códigos em Java/Eclipse/src/autom/input.txt");
+        int a[] = null;
+        InputStream e = new FileInputStream("input.txt");
         InputStreamReader er = new InputStreamReader(e);
         List<Character> partes = new ArrayList<>();
         try {
@@ -23,9 +24,9 @@ public class TXTAutomatos {
 
             while (ebr.ready()) {
                 int texto = ebr.read();
-               
+                //for (int k = 0; k < texto.length(); k++) {
                     partes.add((char)texto);
-               
+                //}
             }
             ebr.close();
         } catch (IOException ioe) {
